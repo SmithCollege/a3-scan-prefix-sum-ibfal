@@ -1,37 +1,40 @@
 #include <iostream>
 #include <math.h>
 #include <sys/time.h>
-#define SIZE 128
+#define SIZE 1024
 
 double get_clock() {
 	struct timeval tv; int ok;
 	ok = gettimeofday(&tv, (void *) 0);
-	if (ok<0) { printf(“gettimeofday error”); }
+	if (ok<0) {printf("gettimeofday error"); }
 	return (tv.tv_sec * 1.0 + tv.tv_usec * 1.0E-6);
 	}
 
 
 //kernel funciton for prefix wihtmultiple threads
-__gloabl__
+__global__
 void prefixsum(int *in, int *out){
-        int xindex= threadIdx.x
+        int xindex= threadIdx.x;
 
         //add up all elements for that speicfic index
         for (int i = 0; i<xindex; i++){
-                int val = 0
-                for (int j = 0, j<=i; j++){
-                        val=inp[j];
+                int val = 0;
+                for (int j = 0; j<=i; j++){
+                        val=in[j];
                 }
                 out[xindex]=val;
         }
-        return 0;
 }
 
 int main(void){
+		int *times;
+		cudaMallocManaged(&times, sizeof(double)*SIZE);
 		double t0 = get_clock();
-		for (i=0; i<N; i++) times[i] = get_clock();
+		for (int i=0; i<SIZE; i++) 
+			times[i] = get_clock();
 		double t1 = get_clock();
-		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/N) );
+		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/SIZE) );
+
 				
         int * input, * output;
         cudaMallocManaged(&input, sizeof(int)*SIZE);
@@ -48,7 +51,7 @@ int main(void){
         //sync
         cudaDeviceSynchronize();
         
-        double end = get_clock()
+        double end = get_clock();
 		printf("start: %f  end: %f", start, end);
         
         printf("%s\n", cudaGetErrorString(cudaGetLastError()));

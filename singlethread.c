@@ -1,24 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#define SIZE 128
+#define SIZE 1024
 
 double get_clock() {
 	struct timeval tv; int ok;
 	ok = gettimeofday(&tv, (void *) 0);
-	if (ok<0) { printf(“gettimeofday error”); }
+	if (ok<0) {printf("gettimeofday error"); }
 	return (tv.tv_sec * 1.0 + tv.tv_usec * 1.0E-6);
 	}
 
-
 int main(){
 		double t0 = get_clock();
-		for (i=0; i<N; i++) times[i] = get_clock();
+		double *times = malloc(sizeof(double)*SIZE);
+		for (int i=0; i<SIZE ; i++) times[i] = get_clock();
 		double t1 = get_clock();
-		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/N) );
+		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/SIZE) );
 		
         //allocate memory 
-        double start = get_clock(); 
+         
                                                                                   
         int* input= malloc(sizeof(int)*SIZE);
         int* output= malloc(sizeof(int)*SIZE);
@@ -37,7 +37,8 @@ int main(){
                 //output[i]=value;                                                                   
         //}  
 
-//smarter alg                                                                                        
+//smarter alg  
+		double start = get_clock();                                                                                      
         output[0]=input[0];
         for (int i=0; i<SIZE; i++){
                 output[i] = input[i]+output[i-1];
