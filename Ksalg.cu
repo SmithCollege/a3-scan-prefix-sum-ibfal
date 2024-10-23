@@ -1,12 +1,12 @@
 #include <iostream>
 #include <math.h>
 #include <sys/time.h>
-#define SIZE 8
+#define SIZE 1024
 
 double get_clock() {
 	struct timeval tv; int ok;
 	ok = gettimeofday(&tv, (void *) 0);
-	if (ok<0) { printf(“gettimeofday error”); }
+	if (ok<0) {printf("gettimeofday error"); }
 	return (tv.tv_sec * 1.0 + tv.tv_usec * 1.0E-6);
 	}
 
@@ -25,30 +25,24 @@ void prefixsum(int *in, int *out, int stride){
         }
 
 int main(void){
+		int *times;
+		cudaMallocManaged(&times, sizeof(double)*SIZE);
 		double t0 = get_clock();
-		for (i=0; i<N; i++) times[i] = get_clock();
+		for (int i=0; i<SIZE; i++) 
+			times[i] = get_clock();
 		double t1 = get_clock();
-		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/N) );
+		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/SIZE) );
 		
         int *input, *output, *temp, *source, *dest;
         cudaMallocManaged(&input, sizeof(int)*SIZE);
         cudaMallocManaged(&output, sizeof(int)*SIZE);
-        //cudaMallocManaged(&temp, sizeof(int)*SIZE);
-        //cudaMallocManaged(&dest, sizeof(int)*SIZE);
-        //cudaMallocManaged(&source, sizeof(int)*SIZE);
 
-        //init input array
-		input[0]= 3;
-		input[1]= 1;
-		input[2]= 7;
-		input[3]= 0;
-		input[4]= 4;
-		input[5]= 1;
-		input[6]= 6;
-		input[7]= 3;
+		for (int i = 0; i<SIZE; i++){
+			input[i]=1;}
 
 		source = &input[0];
 		dest = &output[0];
+
 		
         for (int i = 0; i<SIZE; i++){
         		printf("%d ", input[i]);}
