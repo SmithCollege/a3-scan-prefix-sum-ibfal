@@ -1,7 +1,14 @@
 #include <iostream>
 #include <math.h>
-
+#include <sys/time.h>
 #define SIZE 8
+
+double get_clock() {
+	struct timeval tv; int ok;
+	ok = gettimeofday(&tv, (void *) 0);
+	if (ok<0) { printf(“gettimeofday error”); }
+	return (tv.tv_sec * 1.0 + tv.tv_usec * 1.0E-6);
+	}
 
 //kernel funciton for prefix wihtmultiple threads
 __global__ 
@@ -18,6 +25,11 @@ void prefixsum(int *in, int *out, int stride){
         }
 
 int main(void){
+		double t0 = get_clock();
+		for (i=0; i<N; i++) times[i] = get_clock();
+		double t1 = get_clock();
+		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/N) );
+		
         int *input, *output, *temp, *source, *dest;
         cudaMallocManaged(&input, sizeof(int)*SIZE);
         cudaMallocManaged(&output, sizeof(int)*SIZE);
@@ -41,7 +53,9 @@ int main(void){
         for (int i = 0; i<SIZE; i++){
         		printf("%d ", input[i]);}
         printf("\n");
+
         
+        double start = get_clock();
         // call prefixsum
         for (int stride = 1; stride < SIZE; stride*=2){
         	prefixsum<<<1,SIZE>>>(source, dest, stride);
@@ -52,6 +66,9 @@ int main(void){
 	
         //sync
         cudaDeviceSynchronize();
+        double end = get_clock();
+        printf("start: %f  end: %f", start, end);
+        
         printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 
 		for (int i = 0; i<SIZE; i++){

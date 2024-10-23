@@ -12,13 +12,13 @@ double get_clock() {
 
 
 int main(){
-		t0 = get_clock();
+		double t0 = get_clock();
 		for (i=0; i<N; i++) times[i] = get_clock();
-		t1 = get_clock();
+		double t1 = get_clock();
 		printf("time per call: %f ns\n", (1000000000.0*(t1-t0)/N) );
 		
         //allocate memory 
-        int start = get_clock(); 
+        double start = get_clock(); 
                                                                                   
         int* input= malloc(sizeof(int)*SIZE);
         int* output= malloc(sizeof(int)*SIZE);
@@ -42,14 +42,14 @@ int main(){
         for (int i=0; i<SIZE; i++){
                 output[i] = input[i]+output[i-1];
         }
-		int end = get_clock();
+		double end = get_clock();
 		
         //check results                                                                              
         for (int i=0; i<SIZE; i++){
                 printf("%d ", output[i]);
         }
         printf("\n");
-        printf("start: %d  end: %d", start, end);
+        printf("start: %f  end: %f", start, end);
 
         //free mem                                                                                   
         free(input);
